@@ -1,0 +1,367 @@
+@mixin center($width: null, $height: null) {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    @if not $width and not $height {
+        transform: translate(-50%, -50%);
+    } @else if $width and $height {
+        width: $width;
+        height: $height;
+        margin: -($height / 2) #{0 0} -($width / 2);
+    } @else if not $height {
+        width: $width;
+        margin-left: -($width / 2);
+        transform: translateY(-50%);
+    } @else {
+        height: $height;
+        margin-top: -($height / 2);
+        transform: translateX(-50%);
+    }
+}
+
+
+@mixin opacity($opacity) {
+    opacity: $opacity;
+    $opacity-ie: $opacity * 100;
+    filter: alpha(opacity=$opacity-ie);
+}
+
+@mixin ell() {
+    //
+    overflow: hidden;
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+//多行超出省略号
+@mixin ell2() {
+    word-break: break-all;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+
+@mixin line-clamp($lines: 1, $line-height: 1.4em) {
+    text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis;
+    overflow: hidden;
+    @if $lines == 1 {
+        white-space: nowrap;
+    } @else {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        box-orient: vertical;
+        -webkit-line-clamp: $lines;
+        line-clamp: $lines;
+        line-height: $line-height;
+        max-height: $line-height * $lines;
+    }
+}
+
+// * @desc 移动端1px的线 利用伪类+background-image
+@mixin hairline($position, $color) {
+    // top
+    @if ($position == top) {
+        &:before {
+            left: 0;
+            top: 0;
+            bottom: auto;
+            right: auto;
+            height: 1Px;
+            width: 100%;
+            @include hairline-background-image($color);
+            background-size: 100% 1Px;
+        }
+    }
+    // left
+    @if ($position == left) {
+        &:before {
+            left: 0;
+            top: 0;
+            bottom: auto;
+            right: auto;
+            width: 1Px;
+            height: 100%;
+            @include hairline-background-image($color);
+            background-size: 1Px 100%;
+        }
+    }
+    // bottom
+    @if ($position == bottom) {
+        &:after {
+            left: 0;
+            bottom: 0;
+            right: auto;
+            top: auto;
+            height: 1Px;
+            width: 100%;
+            @include hairline-background-image($color);
+            background-size: 100% 1Px;
+        }
+    }
+    // right
+    @if ($position == right) {
+        &:after {
+            right: 0;
+            top: 0;
+            left: auto;
+            bottom: auto;
+            width: 1Px;
+            height: 100%;
+            @include hairline-background-image($color);
+            background-size: 1Px 100%;
+        }
+    }
+}
+
+@mixin hairline-background-image($color) {
+    content: "";
+    position: absolute;
+    display: block;
+    z-index: 15;
+    background-image: linear-gradient(180deg, $color, $color 50%, transparent 50%);
+    background-repeat: no-repeat;
+}
+
+//.arrow{
+// @include arrow(bottom,10px,#F00);
+//
+@mixin arrow($direction, $size, $color) {
+    width: 0;
+    height: 0;
+    line-height: 0;
+    font-size: 0;
+    overflow: hidden;
+    border-width: $size;
+    cursor: pointer;
+
+    @if $direction==top {
+        border-style: dashed dashed solid dashed;
+        border-color: transparent transparent $color transparent;
+        border-top: none;
+    } @else if $direction==bottom {
+        border-style: solid dashed dashed dashed;
+        border-color: $color transparent transparent transparent;
+        border-bottom: none;
+    } @else if $direction==right {
+        border-style: dashed dashed dashed solid;
+        border-color: transparent transparent transparent $color;
+        border-right: none;
+    } @else if $direction==left {
+        border-style: dashed solid dashed dashed;
+        border-color: transparent $color transparent transparent;
+        border-left: none;
+    }
+}
+
+// clearfix
+@mixin clr {
+    &:after {
+        clear: both;
+        content: '.';
+        display: block;
+        height: 0;
+        line-height: 0;
+        overflow: hidden;
+    }
+
+    *height: 1%;
+}
+
+/*渐变(从上到下）*/
+@mixin linear-gradient($direction:bottom, $color1:transparent, $color2:#306eff, $color3:transparent) {
+    //background: -webkit-linear-gradient($direction,$colorTop, $colorCenter, $colorBottom); /* Safari 5.1 - 6.0 */
+    background: -o-linear-gradient($direction, $color1, $color2, $color3);
+    /* Opera 11.1 - 12.0 */
+    background: -moz-linear-gradient($direction, $color1, $color2, $color3);
+    /* Firefox 3.6 - 15 */
+    background: linear-gradient(to $direction, $color1, $color2, $color3);
+    /* 标准的语法 */
+
+}
+
+/* 行高 */
+@mixin line-height($height:30px, $line-height:30px) {
+    @if ($height !=null) {
+        height: $height;
+    }
+
+    @if ($line-height !=null) {
+        line-height: $line-height;
+    }
+}
+
+/* 定义滚动条样式 圆角和阴影不需要则传入null */
+@mixin scrollBar($width:10px, $height:10px, $outColor:$bgColor, $innerColor:$bgGrey, $radius:5px, $shadow:null) {
+
+    /*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+    &::-webkit-scrollbar {
+        width: $width;
+        height: $height;
+        background-color: $outColor;
+    }
+
+    /*定义滚动条轨道 内阴影+圆角*/
+    &::-webkit-scrollbar-track {
+        @if ($shadow !=null) {
+            -webkit-box-shadow: $shadow;
+        }
+
+        @if ($radius !=null) {
+            border-radius: $radius;
+        }
+
+        background-color: $outColor;
+    }
+
+    /*定义滑块 内阴影+圆角*/
+    &::-webkit-scrollbar-thumb {
+        @if ($shadow !=null) {
+            -webkit-box-shadow: $shadow;
+        }
+
+        @if ($radius !=null) {
+            border-radius: $radius;
+        }
+
+        background-color: $innerColor;
+        border: 1px solid $innerColor;
+    }
+}
+
+/* css3动画 默认3s宽度到200px */
+@mixin animation($from:(width:0px), $to:(width:200px), $name:mymove, $animate:mymove 2s 1 linear infinite) {
+    -webkit-animation: $animate;
+    -o-animation: $animate;
+    animation: $animate;
+
+    @keyframes #{$name} {
+        from {
+
+            @each $key,
+            $value in $from {
+                #{$key}: #{$value};
+            }
+        }
+
+        to {
+
+            @each $key,
+            $value in $to {
+                #{$key}: #{$value};
+            }
+        }
+    }
+
+    @-webkit-keyframes #{$name} {
+        from {
+
+            @each $key,
+            $value in $from {
+                $key: $value;
+            }
+        }
+
+        to {
+
+            @each $key,
+            $value in $to {
+                $key: $value;
+            }
+        }
+    }
+}
+
+//**
+// * @desc 绘制三角形
+// * @param {String} $position
+// * @param {Number} $caret-width 三角形外宽度
+// * @param {Number} $border-width 三角形内宽度
+// * @param {String} $direction 三角形方向
+// * @param {String} $border-color 边框颜色
+// * @param {String} $background-color 背景颜色
+// */
+@mixin caret($position, $caret-width, $border-width, $direction, $border-color, $background-color) {
+    position: relative;
+
+    &:before,
+    &:after {
+        content: "";
+        position: absolute;
+    }
+    // top
+    @if ($direction == top) {
+        &:before {
+            top: 0;
+            left: 0;
+            border-bottom: $caret-width solid $border-color;
+            border-left: $caret-width solid transparent;
+            border-right: $caret-width solid transparent;
+        }
+        &:after {
+            left: $border-width;
+            top: $border-width;
+            border-bottom: ($caret-width - $border-width) solid $background-color;
+            border-left: ($caret-width - $border-width) solid transparent;
+            border-right: ($caret-width - $border-width) solid transparent;
+        }
+    }
+
+    // right
+    @if ($direction == right) {
+        &:before {
+            top: 0;
+            left: 0;
+            border-left: $caret-width solid $border-color;
+            border-top: $caret-width solid transparent;
+            border-bottom: $caret-width solid transparent;
+        }
+        &:after {
+            left: 0;
+            top: $border-width;
+            border-left: ($caret-width - $border-width) solid $background-color;
+            border-top: ($caret-width - $border-width) solid transparent;
+            border-bottom: ($caret-width - $border-width) solid transparent;
+        }
+    }
+
+    //  bottom
+    @if ($direction == bottom) {
+        &:before {
+            top: 0;
+            left: 0;
+            border-top: $caret-width solid $border-color;
+            border-left: $caret-width solid transparent;
+            border-right: $caret-width solid transparent;
+        }
+        &:after {
+            left: $border-width;
+            top: 0;
+            border-top: ($caret-width - $border-width) solid $background-color;
+            border-left: ($caret-width - $border-width) solid transparent;
+            border-right: ($caret-width - $border-width) solid transparent;
+        }
+    }
+
+    // left
+    @if ($direction == left) {
+        &:before {
+            top: 0;
+            left: 0;
+            border-right: $caret-width solid $border-color;
+            border-top: $caret-width solid transparent;
+            border-bottom: $caret-width solid transparent;
+        }
+        &:after {
+            left: $border-width;
+            top: $border-width;
+            border-right: ($caret-width - $border-width) solid $background-color;
+            border-top: ($caret-width - $border-width) solid transparent;
+            border-bottom: ($caret-width - $border-width) solid transparent;
+        }
+    }
+}

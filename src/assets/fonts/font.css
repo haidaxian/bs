@@ -1,0 +1,14 @@
+/* 数字字体 */
+@font-face {
+    font-family: CARMINKI;
+    src: url(./file/CARMINKI.otf);
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: TXFXGKSJ;
+    src: url(./file/txfxgksj.ttf);
+    font-weight: bold;
+}
+
+
